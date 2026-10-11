@@ -1,0 +1,2320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Harnav Ventures</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600;700&display=swap">
+<style>
+/* ============================================================
+   DESIGN TOKENS
+   Layout: sticky header + full-width sections, card grid
+   ============================================================ */
+:root {
+  --green:       #1a4a32;
+  --green-dark:  #122e20;
+  --green-mid:   #1e5c3a;
+  --gold:        #b8924a;
+  --gold-light:  #d4aa6a;
+  --bg:          #ffffff;
+  --bg-soft:     #f7f5f0;
+  --bg-card:     #ffffff;
+  --fg:          #1a1a1a;
+  --fg-muted:    #5a5a5a;
+  --fg-light:    #888;
+  --border:      #e2ddd6;
+  --shadow:      0 2px 16px rgba(0,0,0,0.08);
+  --shadow-lg:   0 8px 40px rgba(0,0,0,0.12);
+  --radius:      8px;
+  --radius-lg:   14px;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body:    'Inter', system-ui, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:         #0f1a14;
+    --bg-soft:    #162110;
+    --bg-card:    #1a2a1e;
+    --fg:         #f0ede8;
+    --fg-muted:   #a0a898;
+    --fg-light:   #6a7a70;
+    --border:     #2a3a2e;
+    --shadow:     0 2px 16px rgba(0,0,0,0.3);
+    --shadow-lg:  0 8px 40px rgba(0,0,0,0.4);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:         #0f1a14;
+  --bg-soft:    #162110;
+  --bg-card:    #1a2a1e;
+  --fg:         #f0ede8;
+  --fg-muted:   #a0a898;
+  --fg-light:   #6a7a70;
+  --border:     #2a3a2e;
+  --shadow:     0 2px 16px rgba(0,0,0,0.3);
+  --shadow-lg:  0 8px 40px rgba(0,0,0,0.4);
+  color-scheme: dark;
+}
+
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--fg);
+  font-size: 15px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+button { cursor: pointer; font-family: inherit; border: none; background: none; }
+ul { list-style: none; }
+
+.container {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ============================================================
+   PAGE ROUTER
+   ============================================================ */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ============================================================
+   HEADER / NAV
+   ============================================================ */
+header {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 100;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+}
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 68px;
+  gap: 24px;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.logo-icon {
+  width: 38px;
+  height: 38px;
+  background: var(--green);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+/* Stylised H mark in CSS */
+.logo-icon::before {
+  content: 'H';
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 22px;
+  color: #fff;
+  line-height: 1;
+}
+.logo-text { line-height: 1.1; }
+.logo-name {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--fg);
+  letter-spacing: 0.04em;
+}
+.logo-tag {
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+nav { display: flex; align-items: center; gap: 6px; }
+.nav-link {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--fg-muted);
+  padding: 6px 14px;
+  border-radius: 6px;
+  transition: color .18s, background .18s;
+  cursor: pointer;
+}
+.nav-link:hover, .nav-link.active {
+  color: var(--green);
+  background: rgba(26,74,50,.07);
+}
+.nav-cta {
+  background: var(--green);
+  color: #fff !important;
+  border-radius: 7px;
+  padding: 9px 20px;
+  font-size: 13.5px;
+  font-weight: 600;
+  transition: background .18s, transform .12s;
+  margin-left: 8px;
+}
+.nav-cta:hover { background: var(--green-mid); transform: translateY(-1px); }
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--fg);
+  border-radius: 2px;
+  transition: .2s;
+}
+.mobile-nav {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 24px 16px;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+}
+.mobile-nav.open { display: flex; }
+.mobile-nav .nav-link { padding: 10px 12px; border-radius: 6px; }
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all .18s;
+  cursor: pointer;
+}
+.btn-primary {
+  background: var(--green);
+  color: #fff;
+  border: 2px solid var(--green);
+}
+.btn-primary:hover { background: var(--green-mid); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(26,74,50,.3); }
+.btn-outline {
+  background: transparent;
+  color: var(--fg);
+  border: 2px solid var(--border);
+}
+.btn-outline:hover { border-color: var(--green); color: var(--green); }
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero {
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-soft);
+  min-height: 520px;
+  display: flex;
+  align-items: center;
+}
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(15,26,20,.92) 42%, rgba(15,26,20,.3) 100%),
+    url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1400&q=80');
+  background-size: cover;
+  background-position: center;
+}
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 560px;
+  padding: 72px 0;
+}
+.hero-eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .18em;
+  color: var(--gold-light);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(32px, 5vw, 52px);
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.15;
+  text-wrap: balance;
+  margin-bottom: 18px;
+}
+.hero h1 em {
+  font-style: normal;
+  color: var(--gold-light);
+}
+.hero-sub {
+  font-size: 15px;
+  color: rgba(255,255,255,.78);
+  line-height: 1.7;
+  margin-bottom: 32px;
+  max-width: 460px;
+}
+.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.hero-badges {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  gap: 0;
+  background: rgba(255,255,255,.06);
+  border-top: 1px solid rgba(255,255,255,.12);
+  backdrop-filter: blur(8px);
+}
+.hero-badge {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 20px;
+  border-right: 1px solid rgba(255,255,255,.1);
+  color: rgba(255,255,255,.85);
+  font-size: 12.5px;
+  font-weight: 500;
+}
+.hero-badge:last-child { border-right: none; }
+.hero-badge-icon {
+  width: 32px;
+  height: 32px;
+  background: rgba(255,255,255,.12);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 15px;
+}
+
+/* ============================================================
+   SECTION HEADERS
+   ============================================================ */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 32px;
+  gap: 16px;
+}
+.section-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 6px;
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(22px, 3.5vw, 30px);
+  font-weight: 700;
+  color: var(--fg);
+  text-wrap: balance;
+}
+.section-sub {
+  font-size: 14px;
+  color: var(--fg-muted);
+  margin-top: 6px;
+}
+.view-all {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--green);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.view-all:hover { color: var(--gold); }
+
+/* ============================================================
+   PRODUCT CATEGORY GRID
+   ============================================================ */
+.section { padding: 64px 0; }
+.section-alt { background: var(--bg-soft); }
+
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 20px;
+}
+.cat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform .18s, box-shadow .18s, border-color .18s;
+}
+.cat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--green);
+}
+.cat-img {
+  width: 100%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  background: var(--bg-soft);
+}
+.cat-img-placeholder {
+  width: 100%;
+  aspect-ratio: 4/3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+}
+.cat-body { padding: 14px 16px 16px; }
+.cat-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--fg);
+  margin-bottom: 4px;
+}
+.cat-desc {
+  font-size: 12px;
+  color: var(--fg-muted);
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+.cat-link {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--green);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.cat-card:hover .cat-link { color: var(--gold); }
+
+/* ============================================================
+   SUPPLY BANNER
+   ============================================================ */
+.supply-banner {
+  background-image:
+    linear-gradient(to right, rgba(10,20,14,.88) 50%, rgba(10,20,14,.55) 100%),
+    url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1400&q=80');
+  background-size: cover;
+  background-position: center;
+  padding: 64px 0;
+  color: #fff;
+}
+.supply-inner {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 40px;
+}
+.supply-text h2 {
+  font-family: var(--font-display);
+  font-size: clamp(24px, 4vw, 36px);
+  font-weight: 700;
+  margin-bottom: 12px;
+  text-wrap: balance;
+}
+.supply-text p {
+  font-size: 14.5px;
+  color: rgba(255,255,255,.78);
+  max-width: 420px;
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+.usp-card {
+  background: rgba(255,255,255,.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  min-width: 220px;
+}
+.usp-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+  font-size: 13px;
+  color: rgba(255,255,255,.9);
+  font-weight: 500;
+}
+.usp-item:last-child { border-bottom: none; padding-bottom: 0; }
+.usp-item:first-child { padding-top: 0; }
+.usp-icon {
+  width: 34px;
+  height: 34px;
+  background: rgba(255,255,255,.15);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   FEATURED PRODUCTS
+   ============================================================ */
+.feat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+}
+.feat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform .18s, box-shadow .18s;
+}
+.feat-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+.feat-img {
+  width: 100%;
+  aspect-ratio: 3/2;
+  object-fit: cover;
+  background: var(--bg-soft);
+  position: relative;
+}
+.feat-img-placeholder {
+  width: 100%;
+  aspect-ratio: 3/2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44px;
+  background: var(--bg-soft);
+}
+.feat-stamp {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(26,74,50,.85);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  backdrop-filter: blur(4px);
+}
+.feat-body { padding: 16px; }
+.feat-name { font-size: 14px; font-weight: 700; color: var(--fg); margin-bottom: 4px; }
+.feat-desc { font-size: 12px; color: var(--fg-muted); margin-bottom: 12px; line-height: 1.5; }
+.feat-link {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--green);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ============================================================
+   CTA STRIP
+   ============================================================ */
+.cta-strip {
+  background: var(--green-dark);
+  padding: 56px 0;
+  text-align: center;
+}
+.cta-strip h2 {
+  font-family: var(--font-display);
+  font-size: clamp(22px, 3.5vw, 32px);
+  color: #fff;
+  margin-bottom: 10px;
+  text-wrap: balance;
+}
+.cta-strip p {
+  color: rgba(255,255,255,.72);
+  font-size: 14.5px;
+  margin-bottom: 28px;
+}
+.cta-strip .btn-primary { background: var(--gold); border-color: var(--gold); color: #fff; }
+.cta-strip .btn-primary:hover { background: var(--gold-light); }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+footer {
+  background: var(--green-dark);
+  color: rgba(255,255,255,.75);
+  padding: 56px 0 0;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr 1.2fr;
+  gap: 40px;
+  padding-bottom: 48px;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+}
+.footer-brand { }
+.footer-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.footer-logo-icon {
+  width: 36px; height: 36px;
+  background: rgba(255,255,255,.15);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 700; font-size: 20px;
+  color: #fff;
+}
+.footer-logo-name { font-family: var(--font-display); font-size: 15px; font-weight: 700; color: #fff; }
+.footer-logo-tag { font-size: 8px; font-weight: 500; letter-spacing: .12em; color: var(--gold-light); text-transform: uppercase; }
+.footer-desc { font-size: 13px; line-height: 1.7; color: rgba(255,255,255,.6); margin-bottom: 20px; }
+.social-links { display: flex; gap: 10px; }
+.social-link {
+  width: 34px; height: 34px;
+  background: rgba(255,255,255,.1);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  color: rgba(255,255,255,.7);
+  transition: background .15s;
+  cursor: pointer;
+}
+.social-link:hover { background: var(--gold); color: #fff; }
+.footer-col h4 {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: #fff;
+  margin-bottom: 16px;
+}
+.footer-col a, .footer-col span {
+  display: block;
+  font-size: 13px;
+  color: rgba(255,255,255,.6);
+  padding: 4px 0;
+  cursor: pointer;
+  transition: color .15s;
+}
+.footer-col a:hover { color: var(--gold-light); }
+.footer-contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 5px 0;
+  font-size: 13px;
+  color: rgba(255,255,255,.65);
+}
+.footer-contact-icon {
+  width: 18px; height: 18px;
+  color: var(--gold);
+  flex-shrink: 0;
+  margin-top: 1px;
+  font-style: normal;
+}
+.footer-bottom {
+  padding: 20px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 12px;
+  color: rgba(255,255,255,.4);
+  flex-wrap: wrap;
+}
+
+/* ============================================================
+   FLOATING WHATSAPP
+   ============================================================ */
+.wa-float {
+  position: fixed;
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  right: 24px;
+  z-index: 200;
+  width: 52px; height: 52px;
+  background: #25D366;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 20px rgba(37,211,102,.4);
+  cursor: pointer;
+  transition: transform .18s, box-shadow .18s;
+}
+.wa-float:hover { transform: scale(1.08); box-shadow: 0 6px 28px rgba(37,211,102,.55); }
+.wa-float svg { width: 28px; height: 28px; }
+
+/* ============================================================
+   PRODUCTS PAGE
+   ============================================================ */
+.products-hero {
+  background: linear-gradient(135deg, var(--green-dark) 0%, var(--green) 100%);
+  padding: 56px 0 44px;
+  color: #fff;
+}
+.products-hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(26px, 4vw, 40px);
+  margin-bottom: 10px;
+}
+.products-hero p { font-size: 15px; color: rgba(255,255,255,.75); }
+
+.products-layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 32px;
+  padding: 48px 0;
+  align-items: start;
+}
+.sidebar {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  position: sticky;
+  top: 88px;
+}
+.sidebar h3 {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  padding: 16px 18px 10px;
+  background: var(--bg-soft);
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-item {
+  padding: 11px 18px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--fg-muted);
+  cursor: pointer;
+  border-bottom: 1px solid var(--border);
+  transition: background .15s, color .15s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sidebar-item:last-child { border-bottom: none; }
+.sidebar-item:hover { background: var(--bg-soft); color: var(--green); }
+.sidebar-item.active {
+  background: rgba(26,74,50,.08);
+  color: var(--green);
+  font-weight: 600;
+  border-left: 3px solid var(--green);
+}
+.sidebar-item .si-count {
+  margin-left: auto;
+  font-size: 11px;
+  background: var(--bg-soft);
+  color: var(--fg-light);
+  padding: 2px 7px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+.sidebar-item.active .si-count { background: var(--green); color: #fff; }
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+.prod-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform .18s, box-shadow .18s, border-color .18s;
+}
+.prod-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: var(--green); }
+.prod-img-wrap {
+  position: relative;
+  aspect-ratio: 4/3;
+  background: var(--bg-soft);
+  overflow: hidden;
+}
+.prod-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+.prod-emoji {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+}
+.harnav-stamp {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(26,74,50,.9);
+  color: #fff;
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  padding: 3px 7px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  backdrop-filter: blur(4px);
+  line-height: 1.6;
+}
+.prod-grade {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: var(--gold);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 3px 7px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.prod-body { padding: 14px 16px 16px; }
+.prod-name { font-size: 14px; font-weight: 700; color: var(--fg); margin-bottom: 6px; }
+.prod-desc { font-size: 12px; color: var(--fg-muted); line-height: 1.5; margin-bottom: 12px; }
+.prod-specs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.spec-tag {
+  font-size: 10.5px;
+  font-weight: 600;
+  background: var(--bg-soft);
+  color: var(--fg-muted);
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+.prod-enquire {
+  width: 100%;
+  background: var(--green);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 9px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s;
+}
+.prod-enquire:hover { background: var(--green-mid); }
+
+/* ============================================================
+   ABOUT PAGE
+   ============================================================ */
+.about-hero {
+  background-image:
+    linear-gradient(to right, rgba(10,20,14,.9) 45%, rgba(10,20,14,.4) 100%),
+    url('https://images.unsplash.com/photo-1553413077-190dd305871c?w=1400&q=80');
+  background-size: cover;
+  background-position: center;
+  padding: 80px 0;
+  color: #fff;
+}
+.about-hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(30px, 5vw, 48px);
+  margin-bottom: 12px;
+  text-wrap: balance;
+}
+.about-hero p { font-size: 15px; color: rgba(255,255,255,.75); max-width: 480px; }
+
+.story-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  padding: 72px 0;
+}
+.story-img {
+  width: 100%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  background: var(--bg-soft);
+}
+.story-img-placeholder {
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: var(--bg-soft);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 72px;
+}
+.story-text .section-eyebrow { margin-bottom: 8px; }
+.story-text h2 {
+  font-family: var(--font-display);
+  font-size: clamp(24px, 3.5vw, 34px);
+  font-weight: 700;
+  margin-bottom: 18px;
+  text-wrap: balance;
+  color: var(--fg);
+}
+.story-text p {
+  font-size: 14.5px;
+  color: var(--fg-muted);
+  line-height: 1.8;
+  margin-bottom: 14px;
+}
+.value-pills {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 48px 0;
+  background: var(--bg-soft);
+}
+.value-pill-wrap { padding: 0; }
+.value-pills .container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.value-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px 20px;
+  text-align: center;
+  transition: box-shadow .18s;
+}
+.value-item:hover { box-shadow: var(--shadow); }
+.value-icon {
+  width: 48px; height: 48px;
+  background: rgba(26,74,50,.1);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  margin: 0 auto 14px;
+}
+.value-name {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--fg);
+  margin-bottom: 6px;
+}
+.value-desc { font-size: 12px; color: var(--fg-muted); line-height: 1.5; }
+
+/* ============================================================
+   WHY US PAGE
+   ============================================================ */
+.why-hero {
+  background: linear-gradient(135deg, var(--green-dark) 0%, var(--green) 100%);
+  padding: 64px 0;
+  color: #fff;
+  text-align: center;
+}
+.why-hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(26px, 4vw, 44px);
+  margin-bottom: 12px;
+  text-wrap: balance;
+}
+.why-hero p { font-size: 15px; color: rgba(255,255,255,.75); max-width: 500px; margin: 0 auto; }
+
+.why-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  padding: 64px 0;
+}
+.why-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px 24px;
+  transition: transform .18s, box-shadow .18s;
+}
+.why-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+.why-num {
+  font-family: var(--font-display);
+  font-size: 42px;
+  font-weight: 700;
+  color: rgba(26,74,50,.12);
+  line-height: 1;
+  margin-bottom: 14px;
+  font-variant-numeric: tabular-nums;
+}
+.why-icon {
+  width: 52px; height: 52px;
+  background: rgba(26,74,50,.1);
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+  margin-bottom: 16px;
+}
+.why-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--fg);
+  margin-bottom: 8px;
+}
+.why-desc {
+  font-size: 13.5px;
+  color: var(--fg-muted);
+  line-height: 1.7;
+}
+
+/* ============================================================
+   CONTACT PAGE
+   ============================================================ */
+.contact-hero {
+  background-image:
+    linear-gradient(to right, rgba(10,20,14,.88) 45%, rgba(10,20,14,.4) 100%),
+    url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=1400&q=80');
+  background-size: cover;
+  background-position: center;
+  padding: 72px 0;
+  color: #fff;
+}
+.contact-hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4.5vw, 44px);
+  margin-bottom: 10px;
+  text-wrap: balance;
+}
+.contact-hero p { font-size: 15px; color: rgba(255,255,255,.75); }
+
+.contact-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 48px;
+  padding: 64px 0;
+  align-items: start;
+}
+.contact-info h3 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--fg);
+  margin-bottom: 24px;
+}
+.contact-detail {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+}
+.contact-detail:last-of-type { border-bottom: none; }
+.contact-detail-icon {
+  width: 42px; height: 42px;
+  background: rgba(26,74,50,.1);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.contact-detail-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--fg-light);
+  margin-bottom: 3px;
+}
+.contact-detail-val {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--fg);
+  line-height: 1.5;
+}
+.map-placeholder {
+  margin-top: 24px;
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  color: var(--fg-muted);
+  gap: 10px;
+  font-size: 13px;
+}
+
+.enquiry-form {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 36px 32px;
+  box-shadow: var(--shadow);
+}
+.enquiry-form h3 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--fg);
+  margin-bottom: 6px;
+}
+.enquiry-form p {
+  font-size: 13px;
+  color: var(--fg-muted);
+  margin-bottom: 24px;
+}
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--fg-muted);
+  letter-spacing: .04em;
+}
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  background: var(--bg-soft);
+  border: 1.5px solid var(--border);
+  border-radius: 7px;
+  padding: 11px 14px;
+  font-size: 13.5px;
+  color: var(--fg);
+  font-family: var(--font-body);
+  transition: border-color .15s, box-shadow .15s;
+  outline: none;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(26,74,50,.1);
+}
+.form-group textarea { resize: vertical; min-height: 90px; }
+.form-group select option { background: var(--bg); }
+.form-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 0 20px;
+  font-size: 12.5px;
+  color: var(--fg-muted);
+}
+.form-check input { width: auto; }
+.form-submit {
+  width: 100%;
+  background: var(--green);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 14px;
+  font-size: 14.5px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background .15s, transform .12s;
+  font-family: var(--font-body);
+}
+.form-submit:hover { background: var(--green-mid); transform: translateY(-1px); }
+.form-success {
+  display: none;
+  text-align: center;
+  padding: 32px;
+}
+.form-success .success-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+.form-success h4 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--green);
+  margin-bottom: 8px;
+}
+.form-success p { font-size: 14px; color: var(--fg-muted); }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 900px) {
+  nav { display: none; }
+  .hamburger { display: flex; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .story-grid { grid-template-columns: 1fr; gap: 36px; }
+  .supply-inner { grid-template-columns: 1fr; }
+  .products-layout { grid-template-columns: 1fr; }
+  .sidebar { position: static; }
+  .contact-layout { grid-template-columns: 1fr; }
+  .value-pills .container { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px) {
+  .container { padding: 0 16px; }
+  .section { padding: 48px 0; }
+  .hero-badges { flex-direction: column; }
+  .hero-badge { border-right: none; border-bottom: 1px solid rgba(255,255,255,.1); }
+  .footer-grid { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+  .value-pills .container { grid-template-columns: 1fr; }
+  .hero-content { padding: 48px 0; }
+  .why-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     HEADER
+     ============================================================ -->
+<header>
+  <div class="container">
+    <div class="nav-inner">
+      <div class="logo" onclick="showPage('home')">
+        <div class="logo-icon"></div>
+        <div class="logo-text">
+          <div class="logo-name">HARNAV VENTURES</div>
+          <div class="logo-tag">The Foundation for Inspired Spaces</div>
+        </div>
+      </div>
+      <nav>
+        <span class="nav-link active" data-page="home" onclick="showPage('home')">Home</span>
+        <span class="nav-link" data-page="products" onclick="showPage('products')">Products</span>
+        <span class="nav-link" data-page="about" onclick="showPage('about')">About Us</span>
+        <span class="nav-link" data-page="why" onclick="showPage('why')">Why Us</span>
+        <span class="nav-link" data-page="contact" onclick="showPage('contact')">Contact</span>
+        <span class="nav-link nav-cta" onclick="showPage('contact')">Request a Quote</span>
+      </nav>
+      <button class="hamburger" onclick="toggleMobile()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+  <div class="mobile-nav" id="mobileNav">
+    <span class="nav-link" onclick="showPage('home');toggleMobile()">Home</span>
+    <span class="nav-link" onclick="showPage('products');toggleMobile()">Products</span>
+    <span class="nav-link" onclick="showPage('about');toggleMobile()">About Us</span>
+    <span class="nav-link" onclick="showPage('why');toggleMobile()">Why Us</span>
+    <span class="nav-link" onclick="showPage('contact');toggleMobile()">Contact</span>
+    <span class="nav-link nav-cta" onclick="showPage('contact');toggleMobile()">Request a Quote</span>
+  </div>
+</header>
+
+<!-- ============================================================
+     HOME PAGE
+     ============================================================ -->
+<div class="page active" id="page-home">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container" style="width:100%">
+      <div class="hero-content">
+        <div class="hero-eyebrow">Your Trusted Partner for</div>
+        <h1>Interior &amp; <em>Building Materials</em></h1>
+        <p class="hero-sub">Plywood, MDF, HDF Boards, Particle Boards, Laminates and Ceiling Materials for Homes, Offices and Commercial Projects.</p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" onclick="showPage('products')">Explore Products →</button>
+          <button class="btn btn-outline" style="color:#fff;border-color:rgba(255,255,255,.4)" onclick="showPage('contact')">Request a Quote</button>
+        </div>
+      </div>
+    </div>
+    <div class="hero-bg"></div>
+  </section>
+
+  <!-- PRODUCT CATEGORIES -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <div class="section-eyebrow">What We Offer</div>
+          <div class="section-title">Our Product Categories</div>
+          <div class="section-sub">High quality materials for your construction and interior projects</div>
+        </div>
+        <span class="view-all" onclick="showPage('products')">View All Products →</span>
+      </div>
+      <div class="cat-grid">
+        <div class="cat-card" onclick="showPage('products')">
+          <div class="cat-img-placeholder" style="background:linear-gradient(135deg,#c8a96e22,#8B6914 22%,#d4aa6a44);color:#8B6914">🪵</div>
+          <div class="cat-body">
+            <div class="cat-name">Plywood</div>
+            <div class="cat-desc">Commercial, Marine, MR &amp; BWR Plywood. 6–25 mm thickness.</div>
+            <div class="cat-link">Explore →</div>
+          </div>
+        </div>
+        <div class="cat-card" onclick="showPage('products')">
+          <div class="cat-img-placeholder" style="background:linear-gradient(135deg,#d4e8db22,#2d6a4f22);color:#2d6a4f">🪟</div>
+          <div class="cat-body">
+            <div class="cat-name">MDF Boards</div>
+            <div class="cat-desc">Standard, Moisture-Resistant &amp; HDMR Boards. 3–25 mm.</div>
+            <div class="cat-link">Explore →</div>
+          </div>
+        </div>
+        <div class="cat-card" onclick="showPage('products')">
+          <div class="cat-img-placeholder" style="background:linear-gradient(135deg,#e8d5c422,#6b4c2c22);color:#6b4c2c">🪨</div>
+          <div class="cat-body">
+            <div class="cat-name">HDF Boards</div>
+            <div class="cat-desc">High Density Fibreboard. Superior strength &amp; smooth surface.</div>
+            <div class="cat-link">Explore →</div>
+          </div>
+        </div>
+        <div class="cat-card" onclick="showPage('products')">
+          <div class="cat-img-placeholder" style="background:linear-gradient(135deg,#f0e6d222,#8B6914 22%,#c8a96e44);color:#8B6914">📦</div>
+          <div class="cat-body">
+            <div class="cat-name">Particle Boards</div>
+            <div class="cat-desc">Strong, Durable &amp; Cost Effective. 9–25 mm thickness.</div>
+            <div class="cat-link">Explore →</div>
+          </div>
+        </div>
+        <div class="cat-card" onclick="showPage('products')">
+          <div class="cat-img-placeholder" style="background:linear-gradient(135deg,#d8e8f022,#1a3a4a22);color:#1a3a4a">🏠</div>
+          <div class="cat-body">
+            <div class="cat-name">False Ceilings</div>
+            <div class="cat-desc">False ceiling boards, grids and accessories. 12/15 mm.</div>
+            <div class="cat-link">Explore →</div>
+          </div>
+        </div>
+        <div class="cat-card" onclick="showPage('products')">
+          <div class="cat-img-placeholder" style="background:linear-gradient(135deg,#f5e8d022,#6b4c2c22);color:#6b4c2c">🎨</div>
+          <div class="cat-body">
+            <div class="cat-name">Wall Panels</div>
+            <div class="cat-desc">Decorative wall panels for modern interiors and offices.</div>
+            <div class="cat-link">Explore →</div>
+          </div>
+        </div>
+        <div class="cat-card" onclick="showPage('products')">
+          <div class="cat-img-placeholder" style="background:linear-gradient(135deg,#e8f0e822,#1a4a3222);color:#1a4a32">✨</div>
+          <div class="cat-body">
+            <div class="cat-name">Inner Laminates</div>
+            <div class="cat-desc">Wide range of designs and finishes. 0.8 / 1.2 mm.</div>
+            <div class="cat-link">Explore →</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SUPPLY BANNER -->
+  <section class="supply-banner">
+    <div class="container">
+      <div class="supply-inner">
+        <div class="supply-text">
+          <h2>Supplying Quality Materials Across Rajasthan</h2>
+          <p>From residential spaces to large commercial projects, we provide genuine products, competitive pricing and reliable delivery. Trusted by builders, contractors, interior designers and retailers across Rajasthan.</p>
+          <button class="btn btn-primary" onclick="showPage('contact')">Request a Quote →</button>
+        </div>
+        <div class="usp-card">
+          <div class="usp-item"><div class="usp-icon">⏱️</div>Timely Delivery</div>
+          <div class="usp-item"><div class="usp-icon">👥</div>Support for Bulk Orders</div>
+          <div class="usp-item"><div class="usp-icon">✅</div>Reliable Sourcing</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURED PRODUCTS -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <div class="section-eyebrow">Popular Choices</div>
+          <div class="section-title">Featured Products</div>
+          <div class="section-sub">Popular choices for your projects</div>
+        </div>
+        <span class="view-all" onclick="showPage('products')">View All Products →</span>
+      </div>
+      <div class="feat-grid">
+        <div class="feat-card" onclick="showPage('contact')">
+          <div class="feat-img-placeholder" style="background:linear-gradient(135deg,#d4aa6a22,#8B6914 22%,#c8a96e44)">🪵
+            <div class="feat-stamp">HARNAV VENTURES</div>
+          </div>
+          <div class="feat-body">
+            <div class="feat-name">Commercial Plywood</div>
+            <div class="feat-desc">Strong and durable for interiors and furniture. BWR/MR grade.</div>
+            <div class="feat-link">View Details →</div>
+          </div>
+        </div>
+        <div class="feat-card" onclick="showPage('contact')">
+          <div class="feat-img-placeholder" style="background:linear-gradient(135deg,#d4e8db22,#2d6a4f22)">🪟
+            <div class="feat-stamp">HARNAV VENTURES</div>
+          </div>
+          <div class="feat-body">
+            <div class="feat-name">HDMR Board</div>
+            <div class="feat-desc">Moisture resistant and high density. Ideal for kitchens &amp; baths.</div>
+            <div class="feat-link">View Details →</div>
+          </div>
+        </div>
+        <div class="feat-card" onclick="showPage('contact')">
+          <div class="feat-img-placeholder" style="background:linear-gradient(135deg,#f0e6d222,#c8a96e44)">✨
+            <div class="feat-stamp">HARNAV VENTURES</div>
+          </div>
+          <div class="feat-body">
+            <div class="feat-name">Decorative Laminates</div>
+            <div class="feat-desc">Wide range of colours and textures. Matt &amp; gloss finishes.</div>
+            <div class="feat-link">View Details →</div>
+          </div>
+        </div>
+        <div class="feat-card" onclick="showPage('contact')">
+          <div class="feat-img-placeholder" style="background:linear-gradient(135deg,#d8e8f022,#1a3a4a22)">🏠
+            <div class="feat-stamp">HARNAV VENTURES</div>
+          </div>
+          <div class="feat-body">
+            <div class="feat-name">False Ceiling Boards</div>
+            <div class="feat-desc">Modern designs for residential and commercial use. 12/15 mm.</div>
+            <div class="feat-link">View Details →</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA STRIP -->
+  <section class="cta-strip">
+    <div class="container">
+      <h2>Need a Quote or Product Information?</h2>
+      <p>Our team is ready to help you with product selection, pricing and delivery details.</p>
+      <button class="btn btn-primary" onclick="showPage('contact')">Get in Touch →</button>
+    </div>
+  </section>
+
+</div><!-- end home -->
+
+<!-- ============================================================
+     PRODUCTS PAGE
+     ============================================================ -->
+<div class="page" id="page-products">
+
+  <div class="products-hero">
+    <div class="container">
+      <h1>Our Products</h1>
+      <p>High quality interior and building materials for every project.</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="products-layout">
+
+      <!-- SIDEBAR -->
+      <div class="sidebar">
+        <h3>Product Categories</h3>
+        <div class="sidebar-item active" onclick="filterProducts('all', this)">All Products <span class="si-count">27</span></div>
+        <div class="sidebar-item" onclick="filterProducts('plywood', this)">Plywood <span class="si-count">6</span></div>
+        <div class="sidebar-item" onclick="filterProducts('mdf', this)">MDF Boards <span class="si-count">4</span></div>
+        <div class="sidebar-item" onclick="filterProducts('hdf', this)">HDF Boards <span class="si-count">3</span></div>
+        <div class="sidebar-item" onclick="filterProducts('particle', this)">Particle Board <span class="si-count">4</span></div>
+        <div class="sidebar-item" onclick="filterProducts('ceiling', this)">False Ceilings <span class="si-count">4</span></div>
+        <div class="sidebar-item" onclick="filterProducts('wall', this)">Wall Panels <span class="si-count">3</span></div>
+        <div class="sidebar-item" onclick="filterProducts('laminate', this)">Inner Laminates <span class="si-count">3</span></div>
+      </div>
+
+      <!-- PRODUCTS GRID -->
+      <div class="products-grid" id="productsGrid">
+
+        <!-- PLYWOOD -->
+        <div class="prod-card" data-cat="plywood">
+          <div class="prod-img-wrap">
+            <div class="prod-emoji">🪵</div>
+            <div class="harnav-stamp">HARNAV VENTURES</div>
+            <div class="prod-grade">BWR Grade</div>
+          </div>
+          <div class="prod-body">
+            <div class="prod-name">Commercial Plywood – MR Grade</div>
+            <div class="prod-desc">Moisture-resistant plywood for furniture, cabinets and interior joinery.</div>
+            <div class="prod-specs">
+              <span class="spec-tag">6–25 mm</span>
+              <span class="spec-tag">2440×1220 mm</span>
+              <span class="spec-tag">MR Grade</span>
+            </div>
+            <button class="prod-enquire" onclick="goToEnquiry('Commercial Plywood – MR Grade')">Enquire Now</button>
+          </div>
+        </div>
+
+        <div class="prod-card" data-cat="plywood">
+          <div class="prod-img-wrap">
+            <div class="prod-emoji">🪵</div>
+            <div class="harnav-stamp">HARNAV VENTURES</div>
+            <div class="prod-grade">BWP Grade</div>
+          </div>
+          <div class="prod-body">
+            <div class="prod-name">Marine Plywood – BWP Grade</div>
+            <div class="prod-desc">Boiling waterproof grade. Ideal for wet areas, kitchens and bathrooms.</div>
+            <div class="prod-specs">
+              <span class="spec-tag">6–25 mm</span>
+              <span class="spec-tag">2440×1220 mm</span>
+              <span class="spec-tag">BWP Grade</span>
+            </div>
+            <button class="prod-enquire" onclick="goToEnquiry('Marine Plywood – BWP Grade')">Enquire Now</button>
+          </div>
+        </div>
+
+        <div class="prod-card" data-cat="plywood">
+          <div class="prod-img-wrap">
+            <div class="prod-emoji">🪵</div>
+            <div class="harnav-stamp">HARNAV VENTURES</div>
+            <div class="prod-grade">BWR Grade</div>
+          </div>
+          <div class="prod-body">
+            <div class="prod-name">Structural Plywood – BWR Grade</div>
+            <div class="prod-desc">Boiling water resistant. For structural formwork and outdoor applications.</div>
+            <div class="prod-specs">
+              <span class="spec-tag">9–25 mm</span>
+              <span class="spec-tag">2440×1220 mm</span>
+              <span class="spec-tag">BWR</span>
+            </div>
+            <button class="prod-enquire" onclick="goToEnquiry('Structural Plywood – BWR Grade')">Enquire Now</button>
+          </div>
+        </div>
+
+        <div class="prod-card" data-cat="plywood">
+          <div class="prod-img-wrap">
+            <div class="prod-emoji">🪵</div>
+            <div class="harnav-stamp">HARNAV VENTURES</div>
+            <div class="prod-grade">Calibrated</div>
+          </div>
+          <div class="prod-body">
+            <div class="prod-name">Calibrated Plywood</div>
+            <div class="prod-desc">Precision-sanded to exact thickness for modular furniture and CNC applications.</div>
+            <div class="prod-specs">
+              <span class="spec-tag">12–19 mm</span>
+              <span class="spec-tag">2440×1220 mm</span>
+              <span class="spec-tag">Calibrated</span>
+            </div>
+            <button class="prod-enquire" onclick="goToEnquiry('Calibrated Plywood')">Enquire Now</button>
+          </div>
+        </div>
+
+        <div class="prod-card" data-cat="plywood">
+          <div class="prod-img-wrap">
+            <div class="prod-emoji">🪵</div>
+            <div class="harnav-stamp">HARNAV VENTURES</div>
+            <div class="prod-grade">Flexi</div>
+          </div>
+          <div class="prod-body">
+            <div class="prod-name">Flexi Plywood</div>
+            <div class="prod-desc">Flexible ply for curved furniture, arched panels and creative interior designs.</div>
+            <div class="prod-specs">
+              <span class="spec-tag">4–6 mm</span>
+              <span class="spec-tag">2440×1220 mm</span>
+              <span class="spec-tag">Flexi</span>
+            </div>
+            <button class="prod-enquire" onclick="goToEnquiry('Flexi Plywood')">Enquire Now</button>
+          </div>
+        </div>
+
+        <div class="prod-card" data-cat="plywood">
+          <div class="prod-img-wrap">
+            <div class="prod-emoji">🪵</div>
+            <div class="harnav-stamp">HARNAV VENTURES</div>
+            <div class="prod-grade">Shuttering</div>
+          </div>
+          <div class="prod-body">
+            <div class="prod-name">Shuttering / Construction Plywood</div>
+            <div class="prod-desc">Heavy-duty plywood for concrete formwork and construction scaffolding.</div>
+            <div class="prod-specs">
+              <span class="spec-tag">12–25 mm</span>
+              <span class="spec-tag">2440×1220 mm</span>
+              <span class="spec-tag">IS 4990</span>
+            </div>
+            <button class="prod-enquire" onclick="goToEnquiry('Shuttering Plywood')">Enquire Now</button>
+          </div>
+        </div>
+
+        <!-- MDF -->
+        <div class="prod-card" data-cat="mdf">
+          <div class="prod-img-wrap">
+            <div class="prod-emoji" style="background:linear-gradient(135deg,#d4e8db22,#2d6a4f22)">🪟</div>
+            <div class="harnav-stamp">HARNAV VENTURES</div>
+            <div class="prod-grade">Interior</div>
+          </div>
+          <div class="prod-body">
+            <div class="prod-name">MDF Board – Interior Grade</div>
+            <div class="prod-desc">Fine homogeneous surface. Ideal for CNC routing, painting and lacquer-finished joinery.</div>
+            <div class="prod-specs">
+              <span class="spec-tag">3–25 mm</span>
+              <span class="spec-tag">2440×1220 mm</span>
+              <span class="spec-tag">750 kg/m³</span>
+            </div>
+            <button class="prod-enquire" onclick="goToEnquiry('MDF Board – Interior Grade')">Enquire Now</button>
+          </div>
+        </div>
+
+        <div class="prod-card" data-cat="mdf">
+          <div class="prod-img-wrap">
+            <div class="prod-emoji" style="background:linear-gradient(135deg,#d4e8db22,#2d6a4f22)">🪟</div>
+            <div class="harnav-stamp">HARNAV VENTURES</div>
+            <div class="prod-grade">Moisture Res.</div>
+          </div>
+          <div class="prod-body">
+            <div class="prod-name">MDF Board – Moisture Resistant</div>
+            <div class="prod-desc">Green-core MDF for areas exposed to humidity. Kitchen shutters and bathroom furniture.</div>
+            <div class="prod-specs">
+              <span class="spec-tag">6–25 mm</span>
+              <span class="spec-tag">2440×1220 mm</span>
+              <span class="spec-tag">MR Grade</span>
+            </div>
+            <button class="prod-enquire" onclick="goToEnquiry('MDF Board – Moisture Resistant')">Enquire Now</button>
+          </div>
+        </div>
+
+        <div class="prod-card" data-cat="mdf">
+          <div class="prod-img-wrap">
+            <div class="prod-emoji" style="background:linear-gradient(135deg,#d4e8db22,#2d6a4f22)">🪟</div>
+            <div class="harnav-stamp">HARNAV VENTURES</div>
+            <div class="prod-grade">Pre-Lam</div>
+          </div>
+          <div class="prod-body">
+            <div class="prod-name">Pre-Laminated MDF</div>
+            <div class="prod-desc">Factory-laminated MDF for modular furniture and ready-to-install applications.</div>
+            <div class="prod-specs">
+              <span class="spec-tag">9–18 mm</span>
+              <span class="spec-tag">2440×1220 mm</span>
+              <span class="spec-tag">Pre-Lam</span>
+            </div>
+            <button class="prod-enquire" onclick="goToEnquiry('Pre-Laminated MDF')">Enquire Now</button>
+          </div>
+        </div>
+
+        <div class="prod-card" data-cat="mdf">
+          <div class="prod-img-wrap">
+            <div class="prod-emoji" style="background:linear-gradient(135deg,#d4e8db22,#2d6a4f22)">🪟</div>
+            <div class="harnav-stamp">HARNAV VENTURES</div>
+            <div class="prod-grade">HDMR</div>
+          </div>
+          <div class="prod-body">
+            <div class="prod-name">HDMR Board</div>
+            <div class="prod-desc">High density moisture resistant board. Perfect for kitchens, bathrooms and wet areas.</div>
+            <div class="prod-specs">
+              <span class="spec-tag">9–18 mm</span>
+              <span class="spec-tag">2440×1220 mm</span>
+              <span class="spec-tag">≤ 8% Moisture</span>
+            </div>
+            <button class="prod-enquire" onclick="goToEnquiry('HDMR Board')">Enquire Now</button>
+          </div>
+        </div>
+
+        <!-- HDF -->
+        <div class="prod-card" data-cat="hdf">
+          <div class="prod-img-wrap">
+            <div class="prod-emoji" style="background:linear-gradient(135deg,#e8d5c422,#6b4c2c22)">🪨</div>
+            <div class="harnav-stamp">HARNAV VENTURES</div>
+            <div class="prod-grade">HDF</div>
+          </div>
+          <div class="prod-body">
+            <div class="prod-name">HDF Board – Standard</div>
+            <div class="prod-desc">High density fibreboard with superior strength. Used for door skins, flooring underlays.</div>
+            <div class="prod-specs">
+              <span class="spec-tag">3–8 mm</span>
+              <span class="spec-tag">2440×1220 mm</span>
+              <span class="spec-tag">&gt;800 kg/m³</span>
+            </div>
+            <button class="prod-enquire" onclick="goToEnquiry('HDF Board – Standard')">Enquire Now</button>
+          </div>
+        </div>
+
+        <div class="prod-card" data-cat="hdf">
+          <div class="prod-img-wrap">
+            <div class="prod-emoji" style="background:linear-gradient(135deg,#e8d5c422,#6b4c2c22)">🪨</div>
+            <div class="harnav-stamp">HARNAV VENTURES</div>
+            <div class="prod-grade">HDF-MR</div>
+          </div>
+          <div class="prod-body">
+            <div class="prod-name">HDF Board – Moisture Resistant</div>
+            <div class="prod-desc">Moisture resistant HDF for humid environments and heavy-use applications.</div>
+            <div class="prod-specs">
+              <span class="spec-tag">3–6 mm</span>
+              <span class="spec-tag">2440×1220 mm</span>
+              <span class="spec-tag">MR Grade</span>
+            </div>
+            <button class="prod-enquire" onclick="goToEnquiry('HDF Board – Moisture Resistant')">Enquire Now</button>
+          </div>
+        </div>
+
+        <div class="prod-card" data-cat="hdf">
+          <div class="prod-img-wrap">
+            <div class="prod-emoji" style="background:linear-gradient(135deg,#e8d5c422,#6b4c2c22)">🪨</div>
+            <div class="harnav-stamp">HARNAV VENTURES</div>
+            <div class="prod-grade">Pre-Lam HDF</div>
+          </div>
+          <div class="prod-body">
+            <div class="prod-name">Pre-Laminated HDF</div>
+            <div class="prod-desc">Factory-laminated HDF for furniture backs, drawer bottoms and decorative panels.</div>
+            <div class="prod-specs">
+              <span class="spec-tag">4–6 mm</span>
+              <span class="spec-tag">2440×1220 mm</span>
+              <span class="spec-tag">Pre-Lam</span>
+            </div>
+            <button class="prod-enquire" onclick="goToEnquiry('Pre-Laminated HDF')">Enquire Now</button>
+          </div>
+        </div>
+
+        <!-- PARTICLE BOARD -->
+        <div class="prod-card" data-cat="particle">
+          <div class="prod-img-wrap">
+            <div class="prod-emoji" style="background:linear-gradient(135deg,#f0e6d222,#c8a96e44)">📦</div>
+            <div class="harnav-stamp">HARNAV VENTURES</div>
+            <div class="prod-grade">Standard</div>
+          </div>
+          <div class="prod-body">
+            <div class="prod-name">Particle Board – Standard</div>
+            <div class="prod-desc">Uniform, dimensionally stable board for interiors, furniture and pre-laminated work.</div>
+            <div class="prod-specs">
+              <span class="spec-tag">9–25 mm</span>
+              <span class="spec-tag">2440×1220 mm</span>
+              <span class="spec-tag">650–750 kg/m³</span>
+            </div>
+            <button class="prod-enquire" onclick="goToEnquiry('Particle Board – Standard')">Enquire Now</button>
+          </div>
+        </div>
+
+        <div class="prod-card" data-cat="particle">
+          <div class="prod-img-wrap">
+            <div class="prod-emoji" style="background:linear-gradient(135deg,#f0e6d222,#c8a96e44)">📦</div>
+            <div class="harnav-stamp">HARNAV VENTURES</div>
+            <div class="prod-grade">MR Grade</div>
+          </div>
+          <div class="prod-body">
+            <div class="prod-name">Particle Board – Moisture Resistant</div>
+            <div class="prod-desc">Green-core particle board for areas with moderate humidity exposure.</div>
+            <div class="prod-specs">
+              <span class="spec-tag">9–25 mm</span>
+              <span class="spec-tag">2440×1220 mm</span>
+              <span class="spec-tag">MR Grade</span>
+            </div>
+            <button class="prod-enquire" onclick="goToEnquiry('Particle Board – Moisture Resistant')">Enquire Now</button>
+          </div>
+        </div>
+
+        <div class="prod-card" data-cat="particle">
+          <div class="prod-img-wrap">
+            <div class="prod-emoji" style="background:linear-gradient(135deg,#f0e6d222,#c8a96e44)">📦</div>
+            <div class="harnav-stamp">HARNAV VENTURES</div>
+            <div class="prod-grade">Pre-Lam</div>
+          </div>
+          <div class="prod-body">
+            <div class="prod-name">Pre-Laminated Particle Board</div>
+            <div class="prod-desc">Factory-laminated for modular kitchen, wardrobe and office furniture applications.</div>
+            <div class="prod-specs">
+              <span class="spec-tag">9–18 mm</span>
+              <span class="spec-tag">2440×1220 mm</span>
+              <span class="spec-tag">Pre-Lam</span>
+            </div>
+            <button class="prod-enquire" onclick="goToEnquiry('Pre-Laminated Particle Board')">Enquire Now</button>
+          </div>
+        </div>
+
+        <div class="prod-card" data-cat="particle">
+          <div class="prod-img-wrap">
+            <div class="prod-emoji" style="background:linear-gradient(135deg,#f0e6d222,#c8a96e44)">📦</div>
+            <div class="harnav-stamp">HARNAV VENTURES</div>
+            <div class="prod-grade">Flooring</div>
+          </div>
+          <div class="prod-body">
+            <div class="prod-name">Particle Board – Flooring Grade</div>
+            <div class="prod-desc">High density, load-bearing particle board for raised flooring and platforms.</div>
+            <div class="prod-specs">
+              <span class="spec-tag">18–25 mm</span>
+              <span class="spec-tag">2440×1220 mm</span>
+              <span class="spec-tag">750 kg/m³</span>
+            </div>
+            <button class="prod-enquire" onclick="goToEnquiry('Particle Board – Flooring Grade')">Enquire Now</button>
+          </div>
+        </div>
+
+        <!-- FALSE CEILING -->
+        <div class="prod-card" data-cat="ceiling">
+          <div class="prod-img-wrap">
+            <div class="prod-emoji" style="background:linear-gradient(135deg,#d8e8f022,#1a3a4a22)">🏠</div>
+            <div class="harnav-stamp">HARNAV VENTURES</div>
+            <div class="prod-grade">Plaster Board</div>
+          </div>
+          <div class="prod-body">
+            <div class="prod-name">Plaster False Ceiling Board</div>
+            <div class="prod-desc">Gypsum plaster ceiling boards for residential and commercial false ceiling systems.</div>
+            <div class="prod-specs">
+              <span class="spec-tag">12 mm</span>
+              <span class="spec-tag">15 mm</span>
+              <span class="spec-tag">Standard</span>
+            </div>
+            <button class="prod-enquire" onclick="goToEnquiry('Plaster False Ceiling Board')">Enquire Now</button>
+          </div>
+        </div>
+
+        <div class="prod-card" data-cat="ceiling">
+          <div class="prod-img-wrap">
+            <div class="prod-emoji" style="background:linear-gradient(135deg,#d8e8f022,#1a3a4a22)">🏠</div>
+            <div class="harnav-stamp">HARNAV VENTURES</div>
+            <div class="prod-grade">Moisture Res.</div>
+          </div>
+          <div class="prod-body">
+            <div class="prod-name">Moisture Resistant Ceiling Board</div>
+            <div class="prod-desc">For bathrooms, kitchens and areas with high humidity. Green-core gypsum board.</div>
+            <div class="prod-specs">
+              <span class="spec-tag">12 mm</span>
+              <span class="spec-tag">15 mm</span>
+              <span class="spec-tag">MR Grade</span>
+            </div>
+            <button class="prod-enquire" onclick="goToEnquiry('Moisture Resistant Ceiling Board')">Enquire Now</button>
+          </div>
+        </div>
+
+        <div class="prod-card" data-cat="ceiling">
+          <div class="prod-img-wrap">
+            <div class="prod-emoji" style="background:linear-gradient(135deg,#d8e8f022,#1a3a4a22)">🔩</div>
+            <div class="harnav-stamp">HARNAV VENTURES</div>
+            <div class="prod-grade">Hardware</div>
+          </div>
+          <div class="prod-body">
+            <div class="prod-name">Ceiling Grid Hardware</div>
+            <div class="prod-desc">Sections, tees, coils and brackets. Complete hardware for full ceiling grid systems.</div>
+            <div class="prod-specs">
+              <span class="spec-tag">25 mm sections</span>
+              <span class="spec-tag">0.8 mm coils</span>
+            </div>
+            <button class="prod-enquire" onclick="goToEnquiry('Ceiling Grid Hardware')">Enquire Now</button>
+          </div>
+        </div>
+
+        <div class="prod-card" data-cat="ceiling">
+          <div class="prod-img-wrap">
+            <div class="prod-emoji" style="background:linear-gradient(135deg,#d8e8f022,#1a3a4a22)">🏗️</div>
+            <div class="harnav-stamp">HARNAV VENTURES</div>
+            <div class="prod-grade">Poplar Core</div>
+          </div>
+          <div class="prod-body">
+            <div class="prod-name">Poplar Core Ceiling Board</div>
+            <div class="prod-desc">Lightweight poplar-core ceiling panels. Easy to install in residential interiors.</div>
+            <div class="prod-specs">
+              <span class="spec-tag">12 mm</span>
+              <span class="spec-tag">2440×1220 mm</span>
+              <span class="spec-tag">Poplar Core</span>
+            </div>
+            <button class="prod-enquire" onclick="goToEnquiry('Poplar Core Ceiling Board')">Enquire Now</button>
+          </div>
+        </div>
+
+        <!-- WALL PANELS -->
+        <div class="prod-card" data-cat="wall">
+          <div class="prod-img-wrap">
+            <div class="prod-emoji" style="background:linear-gradient(135deg,#f5e8d022,#6b4c2c22)">🎨</div>
+            <div class="harnav-stamp">HARNAV VENTURES</div>
+            <div class="prod-grade">Fluted</div>
+          </div>
+          <div class="prod-body">
+            <div class="prod-name">Fluted Wall Panel</div>
+            <div class="prod-desc">Ribbed and fluted MDF wall panels for modern accent walls in homes and offices.</div>
+            <div class="prod-specs">
+              <span class="spec-tag">6–12 mm</span>
+              <span class="spec-tag">2440×1220 mm</span>
+              <span class="spec-tag">MDF Core</span>
+            </div>
+            <button class="prod-enquire" onclick="goToEnquiry('Fluted Wall Panel')">Enquire Now</button>
+          </div>
+        </div>
+
+        <div class="prod-card" data-cat="wall">
+          <div class="prod-img-wrap">
+            <div class="prod-emoji" style="background:linear-gradient(135deg,#f5e8d022,#6b4c2c22)">🎨</div>
+            <div class="harnav-stamp">HARNAV VENTURES</div>
+            <div class="prod-grade">Textured</div>
+          </div>
+          <div class="prod-body">
+            <div class="prod-name">Textured Decorative Panel</div>
+            <div class="prod-desc">Geometric and wood-texture panels for premium interior wall cladding.</div>
+            <div class="prod-specs">
+              <span class="spec-tag">6–9 mm</span>
+              <span class="spec-tag">2440×1220 mm</span>
+              <span class="spec-tag">Multiple Finishes</span>
+            </div>
+            <button class="prod-enquire" onclick="goToEnquiry('Textured Decorative Panel')">Enquire Now</button>
+          </div>
+        </div>
+
+        <div class="prod-card" data-cat="wall">
+          <div class="prod-img-wrap">
+            <div class="prod-emoji" style="background:linear-gradient(135deg,#f5e8d022,#6b4c2c22)">🎨</div>
+            <div class="harnav-stamp">HARNAV VENTURES</div>
+            <div class="prod-grade">Wood Finish</div>
+          </div>
+          <div class="prod-body">
+            <div class="prod-name">Wood-Finish Wall Panel</div>
+            <div class="prod-desc">Natural wood-look laminated panels for TV units, headboards and feature walls.</div>
+            <div class="prod-specs">
+              <span class="spec-tag">6–12 mm</span>
+              <span class="spec-tag">2440×1220 mm</span>
+              <span class="spec-tag">Wood Grain</span>
+            </div>
+            <button class="prod-enquire" onclick="goToEnquiry('Wood-Finish Wall Panel')">Enquire Now</button>
+          </div>
+        </div>
+
+        <!-- LAMINATES -->
+        <div class="prod-card" data-cat="laminate">
+          <div class="prod-img-wrap">
+            <div class="prod-emoji" style="background:linear-gradient(135deg,#e8f0e822,#1a4a3222)">✨</div>
+            <div class="harnav-stamp">HARNAV VENTURES</div>
+            <div class="prod-grade">Fabric</div>
+          </div>
+          <div class="prod-body">
+            <div class="prod-name">Inner Laminates – Fabric Series</div>
+            <div class="prod-desc">Fabric-texture laminates (linen, ramie) for wardrobe and carcass interiors.</div>
+            <div class="prod-specs">
+              <span class="spec-tag">0.8 mm</span>
+              <span class="spec-tag">1.2 mm</span>
+              <span class="spec-tag">Matt Finish</span>
+            </div>
+            <button class="prod-enquire" onclick="goToEnquiry('Inner Laminates – Fabric Series')">Enquire Now</button>
+          </div>
+        </div>
+
+        <div class="prod-card" data-cat="laminate">
+          <div class="prod-img-wrap">
+            <div class="prod-emoji" style="background:linear-gradient(135deg,#e8f0e822,#1a4a3222)">✨</div>
+            <div class="harnav-stamp">HARNAV VENTURES</div>
+            <div class="prod-grade">Wood</div>
+          </div>
+          <div class="prod-body">
+            <div class="prod-name">Inner Laminates – Wood Series</div>
+            <div class="prod-desc">Wood-grain inner laminates: Walnut, Beech, Pine, Wenge and Oak finishes.</div>
+            <div class="prod-specs">
+              <span class="spec-tag">0.8 mm</span>
+              <span class="spec-tag">1.2 mm</span>
+              <span class="spec-tag">SF / MF</span>
+            </div>
+            <button class="prod-enquire" onclick="goToEnquiry('Inner Laminates – Wood Series')">Enquire Now</button>
+          </div>
+        </div>
+
+        <div class="prod-card" data-cat="laminate">
+          <div class="prod-img-wrap">
+            <div class="prod-emoji" style="background:linear-gradient(135deg,#e8f0e822,#1a4a3222)">✨</div>
+            <div class="harnav-stamp">HARNAV VENTURES</div>
+            <div class="prod-grade">Off-White</div>
+          </div>
+          <div class="prod-body">
+            <div class="prod-name">Inner Laminates – Off-White / Marble</div>
+            <div class="prod-desc">Neutral off-white and marble-finish inner laminates. Gloss and matte options.</div>
+            <div class="prod-specs">
+              <span class="spec-tag">0.8 mm</span>
+              <span class="spec-tag">1.2 mm</span>
+              <span class="spec-tag">HG / SF</span>
+            </div>
+            <button class="prod-enquire" onclick="goToEnquiry('Inner Laminates – Off-White / Marble')">Enquire Now</button>
+          </div>
+        </div>
+
+      </div><!-- end products-grid -->
+    </div><!-- end products-layout -->
+  </div><!-- end container -->
+
+  <!-- CTA -->
+  <section class="cta-strip">
+    <div class="container">
+      <h2>Need a Quote or Product Information?</h2>
+      <p>Our team is ready to help you with product selection, pricing and delivery details.</p>
+      <button class="btn btn-primary" onclick="showPage('contact')">Get in Touch →</button>
+    </div>
+  </section>
+
+</div><!-- end products page -->
+
+<!-- ============================================================
+     ABOUT PAGE
+     ============================================================ -->
+<div class="page" id="page-about">
+
+  <div class="about-hero">
+    <div class="container">
+      <h1>About Us</h1>
+      <p>Reliable supply of interior and building materials for a better tomorrow.</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="story-grid">
+      <div class="story-text">
+        <div class="section-eyebrow">Our Story</div>
+        <h2>Harnav Ventures — The Foundation for Inspired Spaces</h2>
+        <p>Harnav Ventures is a Jaipur-based supplier of high-quality plywood, MDF boards, particle board, laminates and ceiling materials. We work with builders, contractors, interior designers, retailers and homeowners, providing genuine products, competitive pricing and reliable delivery across Rajasthan.</p>
+        <p>We believe that the materials that go into a space define how it feels and how long it lasts. That's why every product we supply is graded, moisture-tested and dispatched from our own yard — so you get what is stated on the invoice, every time.</p>
+        <p>From residential homes to large commercial fit-outs, our team is committed to making material procurement simple, transparent and dependable.</p>
+      </div>
+      <div class="story-img-placeholder">🏭</div>
+    </div>
+  </div>
+
+  <div class="value-pills">
+    <div class="container">
+      <div class="value-item">
+        <div class="value-icon">🛡️</div>
+        <div class="value-name">Quality Products</div>
+        <div class="value-desc">Sourced from trusted manufacturers and mills.</div>
+      </div>
+      <div class="value-item">
+        <div class="value-icon">🗂️</div>
+        <div class="value-name">Wide Range</div>
+        <div class="value-desc">Multiple brands and varieties under one roof.</div>
+      </div>
+      <div class="value-item">
+        <div class="value-icon">👥</div>
+        <div class="value-name">Customer Focus</div>
+        <div class="value-desc">Support at every stage of your project.</div>
+      </div>
+      <div class="value-item">
+        <div class="value-icon">⏱️</div>
+        <div class="value-name">Timely Delivery</div>
+        <div class="value-desc">Reliable supply across Rajasthan.</div>
+      </div>
+    </div>
+  </div>
+
+  <section class="cta-strip">
+    <div class="container">
+      <h2>Ready to Work Together?</h2>
+      <p>Get in touch for product enquiries, pricing and delivery details.</p>
+      <button class="btn btn-primary" onclick="showPage('contact')">Contact Our Team →</button>
+    </div>
+  </section>
+
+</div><!-- end about -->
+
+<!-- ============================================================
+     WHY US PAGE
+     ============================================================ -->
+<div class="page" id="page-why">
+
+  <div class="why-hero">
+    <div class="container">
+      <h1>Why Choose Harnav Ventures?</h1>
+      <p>Panels are cheap to buy and expensive to live with. Here is what we do differently.</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="why-grid">
+      <div class="why-card">
+        <div class="why-num">01</div>
+        <div class="why-icon">📋</div>
+        <div class="why-title">Grade Stated on Every Invoice</div>
+        <div class="why-desc">BWR, BWP or MR — you get the certificate with the load, not a promise that it is 'the good one'. Full transparency on every delivery.</div>
+      </div>
+      <div class="why-card">
+        <div class="why-num">02</div>
+        <div class="why-icon">💧</div>
+        <div class="why-title">Dry Stock, Checked Before Dispatch</div>
+        <div class="why-desc">Every batch is moisture-tested and conditioned. Warping after installation is our problem, not yours. We stand behind what we supply.</div>
+      </div>
+      <div class="why-card">
+        <div class="why-num">03</div>
+        <div class="why-icon">📦</div>
+        <div class="why-title">Bundled to Your Cut List</div>
+        <div class="why-desc">Send us your shutter and wardrobe schedules and we will break the bundles down to the sizes you actually install. Less waste for you.</div>
+      </div>
+      <div class="why-card">
+        <div class="why-num">04</div>
+        <div class="why-icon">🏭</div>
+        <div class="why-title">One Yard, Seven Product Lines</div>
+        <div class="why-desc">Boards, laminates and ceiling systems sourced together, so a full fit-out does not run on three deliveries from three different suppliers.</div>
+      </div>
+      <div class="why-card">
+        <div class="why-num">05</div>
+        <div class="why-icon">🤝</div>
+        <div class="why-title">Competitive Trade Pricing</div>
+        <div class="why-desc">We offer mill-direct pricing on bulk orders. Our trade relationships ensure you get the best value without compromising on quality.</div>
+      </div>
+      <div class="why-card">
+        <div class="why-num">06</div>
+        <div class="why-icon">🚚</div>
+        <div class="why-title">Reliable Delivery Across Rajasthan</div>
+        <div class="why-desc">We supply across Rajasthan and to NCR. Freight is quoted separately so you see material cost and delivery cost as separate, clear lines.</div>
+      </div>
+    </div>
+  </div>
+
+  <section class="cta-strip">
+    <div class="container">
+      <h2>Experience the Harnav Difference</h2>
+      <p>Send us your requirements and our team will get back with a detailed quote.</p>
+      <button class="btn btn-primary" onclick="showPage('contact')">Request a Quote →</button>
+    </div>
+  </section>
+
+</div><!-- end why us -->
+
+<!-- ============================================================
+     CONTACT PAGE
+     ============================================================ -->
+<div class="page" id="page-contact">
+
+  <div class="contact-hero">
+    <div class="container">
+      <h1>Contact Us</h1>
+      <p>Get in touch for product enquiries, pricing and delivery details.</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="contact-layout">
+
+      <!-- OFFICE INFO -->
+      <div class="contact-info">
+        <h3>Our Office</h3>
+
+        <div class="contact-detail">
+          <div class="contact-detail-icon">📍</div>
+          <div>
+            <div class="contact-detail-label">Address</div>
+            <div class="contact-detail-val">Pearl Pleasure, B-134, Rajendra Marg,<br>Bapu Nagar, Jaipur, Rajasthan – 302015</div>
+          </div>
+        </div>
+
+        <div class="contact-detail">
+          <div class="contact-detail-icon">📞</div>
+          <div>
+            <div class="contact-detail-label">Phone</div>
+            <div class="contact-detail-val">+91 73000 75275</div>
+          </div>
+        </div>
+
+        <div class="contact-detail">
+          <div class="contact-detail-icon">✉️</div>
+          <div>
+            <div class="contact-detail-label">Email</div>
+            <div class="contact-detail-val">manish@paralam.in</div>
+          </div>
+        </div>
+
+        <div class="contact-detail">
+          <div class="contact-detail-icon">🕐</div>
+          <div>
+            <div class="contact-detail-label">Business Hours</div>
+            <div class="contact-detail-val">Monday – Saturday<br>9:00 AM – 6:00 PM</div>
+          </div>
+        </div>
+
+        <div class="map-placeholder">
+          📍 &nbsp; Pearl Pleasure, Bapu Nagar, Jaipur
+        </div>
+      </div>
+
+      <!-- ENQUIRY FORM -->
+      <div class="enquiry-form" id="enquiryFormWrap">
+        <h3>Send an Enquiry</h3>
+        <p>Fill in your details and our team will get back to you shortly.</p>
+
+        <form id="enquiryForm" onsubmit="submitEnquiry(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fname">Full Name *</label>
+              <input type="text" id="fname" placeholder="Your full name" required>
+            </div>
+            <div class="form-group">
+              <label for="phone">Phone Number *</label>
+              <input type="tel" id="phone" placeholder="+91 98765 43210" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" placeholder="your@email.com">
+            </div>
+            <div class="form-group">
+              <label for="product">Product Interested In *</label>
+              <select id="product" required>
+                <option value="">Select a product</option>
+                <option>Plywood</option>
+                <option>MDF Boards</option>
+                <option>HDF Boards</option>
+                <option>Particle Board</option>
+                <option>False Ceilings</option>
+                <option>Wall Panels</option>
+                <option>Inner Laminates</option>
+                <option>Multiple Products</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="qty">Quantity (Optional)</label>
+              <input type="text" id="qty" placeholder="e.g. 100 sheets">
+            </div>
+            <div class="form-group">
+              <label for="city">Delivery Location (City/Pincode)</label>
+              <input type="text" id="city" placeholder="Jaipur / 302015">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="msg">Message (Optional)</label>
+            <textarea id="msg" placeholder="Tell us more about your requirement — sizes, grades, usage, timeline..."></textarea>
+          </div>
+          <div class="form-check">
+            <input type="checkbox" id="privacy" required>
+            <label for="privacy">I agree to the Privacy Policy</label>
+          </div>
+          <button type="submit" class="form-submit">Send Enquiry →</button>
+        </form>
+
+        <div class="form-success" id="formSuccess">
+          <div class="success-icon">✅</div>
+          <h4>Enquiry Sent Successfully!</h4>
+          <p>Thank you for reaching out. Our team will contact you within 24 hours.</p>
+          <button class="btn btn-primary" style="margin:20px auto 0;display:inline-flex" onclick="resetForm()">Send Another Enquiry</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- end contact -->
+
+<!-- ============================================================
+     FOOTER (shared)
+     ============================================================ -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <div class="footer-logo-icon">H</div>
+          <div>
+            <div class="footer-logo-name">HARNAV VENTURES</div>
+            <div class="footer-logo-tag">The Foundation for Inspired Spaces</div>
+          </div>
+        </div>
+        <p class="footer-desc">Your trusted partner for plywood, MDF boards, particle boards, laminates and ceiling materials across Rajasthan.</p>
+        <div class="social-links">
+          <div class="social-link" title="LinkedIn">in</div>
+          <div class="social-link" title="Instagram">ig</div>
+          <div class="social-link" title="Facebook">fb</div>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <a onclick="showPage('home')">Home</a>
+        <a onclick="showPage('products')">Products</a>
+        <a onclick="showPage('about')">About Us</a>
+        <a onclick="showPage('why')">Why Us</a>
+        <a onclick="showPage('contact')">Contact</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>Our Products</h4>
+        <a onclick="showPage('products')">Plywood</a>
+        <a onclick="showPage('products')">MDF Boards</a>
+        <a onclick="showPage('products')">HDF Boards</a>
+        <a onclick="showPage('products')">Particle Boards</a>
+        <a onclick="showPage('products')">False Ceilings</a>
+        <a onclick="showPage('products')">Wall Panels</a>
+        <a onclick="showPage('products')">Inner Laminates</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>Contact Us</h4>
+        <div class="footer-contact-item">
+          <em class="footer-contact-icon">📍</em>
+          <span>Pearl Pleasure, B-134, Rajendra Marg, Bapu Nagar, Jaipur, Rajasthan – 302015</span>
+        </div>
+        <div class="footer-contact-item">
+          <em class="footer-contact-icon">📞</em>
+          <span>+91 73000 75275</span>
+        </div>
+        <div class="footer-contact-item">
+          <em class="footer-contact-icon">✉️</em>
+          <span>manish@paralam.in</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© 2025 Harnav Ventures. All rights reserved.</span>
+      <span>Privacy Policy &nbsp;|&nbsp; Terms &amp; Conditions</span>
+    </div>
+  </div>
+</footer>
+
+<!-- WhatsApp Float -->
+<div class="wa-float" onclick="window.open('https://wa.me/917300075275?text=Hello%2C%20I%20am%20interested%20in%20your%20products.')" title="Chat on WhatsApp">
+  <svg viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+</div>
+
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
+<script>
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelectorAll('.nav-link[data-page]').forEach(l => l.classList.remove('active'));
+  const active = document.querySelector('.nav-link[data-page="' + page + '"]');
+  if (active) active.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toggleMobile() {
+  document.getElementById('mobileNav').classList.toggle('open');
+}
+
+function filterProducts(cat, el) {
+  document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.prod-card').forEach(c => {
+    if (cat === 'all' || c.dataset.cat === cat) {
+      c.style.display = '';
+    } else {
+      c.style.display = 'none';
+    }
+  });
+}
+
+function goToEnquiry(product) {
+  showPage('contact');
+  setTimeout(() => {
+    const sel = document.getElementById('product');
+    if (sel) {
+      const opts = [...sel.options];
+      const match = opts.find(o => product.toLowerCase().includes(o.value.toLowerCase()));
+      if (match) sel.value = match.value;
+      else sel.value = 'Multiple Products';
+    }
+  }, 100);
+}
+
+function submitEnquiry(e) {
+  e.preventDefault();
+  document.getElementById('enquiryForm').style.display = 'none';
+  document.getElementById('formSuccess').style.display = 'block';
+}
+
+function resetForm() {
+  document.getElementById('enquiryForm').reset();
+  document.getElementById('enquiryForm').style.display = 'block';
+  document.getElementById('formSuccess').style.display = 'none';
+}
+</script>
+
+</body>
+</html>
