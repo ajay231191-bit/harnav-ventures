@@ -2123,7 +2123,7 @@ footer {
         <h3>Send an Enquiry</h3>
         <p>Fill in your details and our team will get back to you shortly.</p>
 
-        <form id="enquiryForm" onsubmit="submitEnquiry(event)">
+        <form id="enquiryForm" onsubmit="submitEnquiry(event)" action="https://formspree.io/f/xgaollvz" method="POST">
           <div class="form-row">
             <div class="form-group">
               <label for="fname">Full Name *</label>
@@ -2305,8 +2305,22 @@ function goToEnquiry(product) {
 
 function submitEnquiry(e) {
   e.preventDefault();
-  document.getElementById('enquiryForm').style.display = 'none';
-  document.getElementById('formSuccess').style.display = 'block';
+  const form = document.getElementById('enquiryForm');
+  const data = new FormData(form);
+  fetch('https://formspree.io/f/xgaollvz', {
+    method: 'POST',
+    body: data,
+    headers: { 'Accept': 'application/json' }
+  }).then(res => {
+    if (res.ok) {
+      form.style.display = 'none';
+      document.getElementById('formSuccess').style.display = 'block';
+    } else {
+      alert('Something went wrong. Please try again or WhatsApp us.');
+    }
+  }).catch(() => {
+    alert('Network error. Please try again or WhatsApp us.');
+  });
 }
 
 function resetForm() {
